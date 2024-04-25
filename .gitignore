@@ -1,3 +1,4 @@
 /.vscode
 /venv
 __pycach__/
+db_user.config
