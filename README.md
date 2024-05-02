@@ -1,4 +1,4 @@
-# Welcom to MedCare Clinic Patient Scheduler!
+# Welcome to MedCare Clinic Patient Scheduler!
 # Overview
 This repo contains the backend and frontend(coming soon) of the CS340 project. 
 
@@ -33,7 +33,6 @@ This repo contains the backend and frontend(coming soon) of the CS340 project.
 [User.<your_name>]
 user = cs340_<username> #This should be your mysql username
 ps = <mysql ps>
-
 ```
 - Then within [backend/app.py] look for `user_name` within the `read_config` function and change it to the name you entered as the table header in the config file. 
     - This will now connect the app to your database
