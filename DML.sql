@@ -5,7 +5,7 @@ SELECT * FROM Employees;
 SELECT * FROM Departments; 
 SELECT * FROM Procedures;
 SELECT * FROM Employee_has_Schedule;
-SELECT * FROM Pateints_has_Schedule;
+SELECT * FROM Patients_has_Schedule;
 
 
 -- Views with some more data that's related to eachtother 
@@ -60,7 +60,7 @@ INSERT INTO Procedures (procedure_name, duration, require_role) VALUES (:prcdr_n
 
 
 -- Update patient email
-UPDATE Patients SET Pateints.email = :ptnt_email_updt where Pateints.id = (SELECT Patients.id from Patients where Pateints.name = :ptnt_name_updt_input);
+UPDATE Patients SET Patients.email = :ptnt_email_updt where Patients.id = (SELECT Patients.id from Patients where Patients.name = :ptnt_name_updt_input);
 -- Update employee Department id 
 UPDATE Employees SET Employees.Departments_department_id= :empl_dptm_id_updt where Employee.id = (SELECT Employees.id from Employees where Employees.name = :empl_name_updt_input);
 --Update Schedule time(M:M relationship)
