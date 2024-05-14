@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS `Employees` (
   `employee_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `role` VARCHAR(45) NOT NULL,
-  `Departments_department_id` INT NOT NULL,
+  -- Allow for department to be NULLable FK relationship
+  `Departments_department_id` INT,
   PRIMARY KEY (`employee_id`),
   -- create index for metadata queries and helps join queries execute faster
   INDEX `fk_Employees_Departments1_idx` (`Departments_department_id` ASC) VISIBLE,

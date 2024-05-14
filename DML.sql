@@ -62,8 +62,11 @@ INSERT INTO Procedures (procedure_name, duration, require_role) VALUES (:prcdr_n
 -- Update patient email
 UPDATE Patients SET Patients.email = :ptnt_email_updt where Patients.id = (SELECT Patients.id from Patients where Patients.name = :ptnt_name_updt_input);
 -- Update employee Department id 
-UPDATE Employees SET Employees.Departments_department_id= :empl_dptm_id_updt where Employee.id = (SELECT Employees.id from Employees where Employees.name = :empl_name_updt_input);
---Update Schedule time(M:M relationship)
+UPDATE Employees SET Employees.Departments_department_id = :empl_dptm_id_updt where Employee.id = (SELECT Employees.id from Employees where Employees.name = :empl_name_updt_input);
+-- Update employees department_id FK to NULL
+UPDATE Employees SET Employees.Departments_department_id = NULL where Employee.id = (SELECT Employees.id from Employees where Employees.name = :empl_name_updt_input);
+
+-- Update Schedule time(M:M relationship)
 UPDATE Schedules SET Schedules.date = :schdl_date_updt where Schedules.slot_id = :schdl_slot_id_updt;
 
 -- Delete patient
