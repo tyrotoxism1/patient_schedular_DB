@@ -1,7 +1,6 @@
 from flask import Flask, render_template, json, redirect
 from flask_mysqldb import MySQL
 from flask import request
-import os
 import configparser
 
 #Read config data for MySQL login. Takes in return_field which is the desired field retreived from the config.
@@ -35,11 +34,7 @@ mysql = MySQL(app)
 # Routes
 @app.route('/')
 def root():
-    query = "SHOW Tables;"
-    # query1 = 'DROP TABLE IF EXISTS diagnostic;';
-    # query2 = 'CREATE TABLE diagnostic(id INT PRIMARY KEY AUTO_INCREMENT, text VARCHAR(255) NOT NULL);';
-    # query3 = 'INSERT INTO diagnostic (text) VALUES ("MySQL is working for janzenm!")';
-    # query4 = 'SELECT * FROM diagnostic;';
+    query = "SELECT * FROM Patients;"
     cur = mysql.connection.cursor()
     cur.execute(query)
     # cur.execute(query2)
@@ -47,13 +42,34 @@ def root():
     # cur.execute(query4)
     results = cur.fetchall()
 
-    return "<h1>MySQL Results</h1>" + str(results[0])
+    return "<h1>MySQL Results</h1>" + json.dumps(str(results))
 
+@app.route('/Patients')
+def patients():
+    query = "SELECT * FROM Patients;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    # cur.execute(query2)
+    # cur.execute(query3)
+    # cur.execute(query4)
+    results = cur.fetchall()
 
+    return "<h1>Patients</h1>" + json.dumps(str(results))
+
+@app.route('/Employees')
+def employees():
+    query = "SELECT * FROM Employees;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    # cur.execute(query2)
+    # cur.execute(query3)
+    # cur.execute(query4)
+    results = cur.fetchall()
+
+    return "<h1>Patients</h1>" + json.dumps(str(results))
 
 # Listener
 if __name__ == "__main__":
-
     #Start the app on port 3000, it will be different once hosted
     app.run(port=4539, debug=True)
 
