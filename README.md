@@ -41,3 +41,8 @@ ps = <mysql ps>
 `python3 app.py`
 - This should start a localhost server to view the return of the executed sql statements within [backend/app.py]
 - You may need gunicorn to installed to have the app build correctly, I'd reccomend [this tutorial](https://github.com/osu-cs340-ecampus/flask-starter-app?tab=readme-ov-file#gunicorn) for setting that up with flask and if any other problems occur [this guide](https://github.com/osu-cs340-ecampus/flask-starter-app?tab=readme-ov-file#gunicorn) is also a great place to check the steps. 
+
+# Front End Setup
+## Running Front End server
+1. Change into *frontend* directory
+2. run `npm start`

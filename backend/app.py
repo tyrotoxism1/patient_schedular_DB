@@ -1,6 +1,7 @@
-from flask import Flask, render_template, json, redirect
+from flask import Flask, render_template, json, jsonify, redirect
 from flask_mysqldb import MySQL
 from flask import request
+from flask_cors import CORS
 import configparser
 
 #Read config data for MySQL login. Takes in return_field which is the desired field retreived from the config.
@@ -26,6 +27,7 @@ app.config['MYSQL_USER'] = read_config("user")
 app.config['MYSQL_PASSWORD'] = read_config("ps") 
 app.config['MYSQL_DB'] = 'cs340_janzenm'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
+CORS(app)
 
 
 mysql = MySQL(app)
@@ -42,9 +44,9 @@ def root():
     # cur.execute(query4)
     results = cur.fetchall()
 
-    return "<h1>MySQL Results</h1>" + json.dumps(str(results))
+    return jsonify(results)
 
-@app.route('/Patients')
+@app.route('/Patients', methods=['GET'])
 def patients():
     query = "SELECT * FROM Patients;"
     cur = mysql.connection.cursor()
@@ -54,7 +56,7 @@ def patients():
     # cur.execute(query4)
     results = cur.fetchall()
 
-    return "<h1>Patients</h1>" + json.dumps(str(results))
+    return jsonify(results)
 
 @app.route('/Employees')
 def employees():
@@ -66,10 +68,24 @@ def employees():
     # cur.execute(query4)
     results = cur.fetchall()
 
-    return "<h1>Patients</h1>" + json.dumps(str(results))
+    return "<h1>Employees</h1>" + json.dumps(str(results))
+
+@app.route('/Schedules')
+def schedules():
+    query = "SELECT * FROM Schedules;"
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    # cur.execute(query2)
+    # cur.execute(query3)
+    # cur.execute(query4)
+    results = cur.fetchall()
+
+    return "<h1>Employees</h1>" + json.dumps(str(results))
 
 # Listener
 if __name__ == "__main__":
     #Start the app on port 3000, it will be different once hosted
-    app.run(port=4539, debug=True)
+    app.run(host='0.0.0.0', port=4549, debug=True)
+    #app.run()
+
 
