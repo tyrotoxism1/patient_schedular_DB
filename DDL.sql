@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `Employees` (
     FOREIGN KEY (`Departments_department_id`)
     REFERENCES `Departments` (`department_id`)
     -- If a row is deleted in Department table, don't delete any rows in Employee table 
-    ON DELETE No ACTION 
+    ON DELETE SET NULL 
     -- If a row is changed/updated in Department table, update corresponding values in Employee table
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
