@@ -128,9 +128,6 @@ def departments():
     except Exception as e:
         print(f"Err in executing SQL for Departments endpoint:\n{e}")
         return jsonify(error=str(e)),500
-    if(cur):
-        cur.close()
-    return json.dumps(str(results))
 
 
 @app.route('/Schedules', methods = ['POST', 'GET', 'PUT', 'DELETE'])

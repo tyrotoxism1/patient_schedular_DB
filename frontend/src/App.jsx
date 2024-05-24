@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react'
 
 function App() {
@@ -11,25 +12,20 @@ function App() {
       department_new_name,
     };
      try {
-      const response = await fetch('/Departments', {
-        method: 'PUT',
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      const response = await axios.put(URL, data, {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
       });
 
       const result = await response.json();
 
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
+      setMessage(result.message);
     } catch (error) {
       console.error('Error:', error);
       setMessage('An error occurred while updating the departments.');
-    }
+    } 
   };
   
   const handleCreateDepartment= async () => {
@@ -37,24 +33,19 @@ function App() {
       department_new_name,
     };
      try {
-      const response = await fetch('/Departments', {
-        method: 'POST',
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      const response = await axios.post(URL, data, {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
       });
 
       const result = await response.json();
 
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
+      setMessage(result.message);
     } catch (error) {
       console.error('Error:', error);
-      setMessage('An error occurred while creating new department.');
+      setMessage('An error occurred while Creating new department.');
     }
   };
 
@@ -63,47 +54,41 @@ const handleDeleteDepartment= async () => {
       department_id,
     };
      try {
-      const response = await fetch('/Departments', {
-        method: 'DELETE',
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      const response = await axios.delete(URL, {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        data: {
+          department_id
+        }
       });
 
       const result = await response.json();
 
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
+      setMessage(result.message);
     } catch (error) {
       console.error('Error:', error);
-      setMessage('An error occurred while Deleting department.');
+      setMessage('An error occurred while deleting the department.');
     }
   };
 
   const handleGetDepartments = async () => {
      try {
-      const response = await fetch('/Departments', {
-        method: 'GET',
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      const response = await fetch(URL, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
       const result = await response.json();
+      console.log(result)
 
-      if (response.ok) {
-        setMessage(result.message);
-        console.log(result)
-      } else {
-        setMessage(result.message);
-      }
+      setMessage(result.message);
     } catch (error) {
       console.error('Error:', error);
-      setMessage('An error occurred while Getting department data.');
+      setMessage('An error occurred while getting the departments.');
     }
   };
 
