@@ -14,7 +14,7 @@ def procedure():
             results = cur.fetchall()
             cur.close()
             return jsonify(results)  
-    # Update procedure name based on incoming id
+        # Update procedure name based on incoming id
         elif request.method == 'PUT':
             print(f"Incoming PUT data: {request.get_json()}")
             data = request.get_json()
