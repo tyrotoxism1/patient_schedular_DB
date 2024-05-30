@@ -3,10 +3,12 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
 export default function Procedure() {
-const [update_procedure_id, set_update_procedure_id] = useState('');
+const [update_procedure_old_name, set_update_procedure_old_name] = useState('');
 const [update_procedure_new_name, set_update_procedure_new_name] = useState('');
 const [create_procedure_new_name, set_create_procedure_new_name] = useState('');
-const [delete_procedure_id, set_delete_procedure_id] = useState('');
+const [create_procedure_duration, set_create_procedure_duration] = useState('');
+const [create_procedure_required_role, set_create_procedure_required_role] = useState('');
+const [delete_procedure_name, set_delete_procedure_name] = useState('');
 const [procedure_data, set_procedure_data] = useState([]);
 const [message, setMessage] = useState('');
 
@@ -32,8 +34,8 @@ useEffect(() => {
 
 const handleUpdateProcedure = async () => {
   const data = {
-    id: update_procedure_id, // Ensure backend expects this format
-    name: update_procedure_new_name, // Ensure backend expects this format
+    old_name: update_procedure_old_name, // Ensure backend expects this format
+    new_name: update_procedure_new_name, // Ensure backend expects this format
   };
   try {
     const URL = import.meta.env.VITE_API_URL + "Procedures";
@@ -54,6 +56,8 @@ const handleUpdateProcedure = async () => {
 const handleCreateProcedure = async () => {
   const data = {
     name: create_procedure_new_name, // Ensure backend expects this format
+    duration: create_procedure_duration,
+    required_role: create_procedure_required_role
   };
   try {
     const URL = import.meta.env.VITE_API_URL + "Procedures";
@@ -79,7 +83,7 @@ const handleDeleteProcedure = async () => {
         'Content-Type': 'application/json'
       },
       data: {
-        delete_procedure_id
+        name: delete_procedure_name 
       },
     });
 
@@ -108,10 +112,10 @@ const handleGetProcedures = async () => {
                 <div className="left-half">
                     <h2>Update Procedures</h2>
                     <input
-                        type="number"
-                        placeholder="Procedure ID"
-                        value={update_procedure_id}
-                        onChange={(e) => set_update_procedure_id(e.target.value)}
+                        type="text"
+                        placeholder="Old Procedure Name"
+                        value={update_procedure_old_name}
+                        onChange={(e) => set_update_procedure_old_name(e.target.value)}
                     />
                     <input
                         type="text"
@@ -129,6 +133,19 @@ const handleGetProcedures = async () => {
                         value={create_procedure_new_name}
                         onChange={(e) => set_create_procedure_new_name(e.target.value)}
                     />
+                    <input
+                        type='number'
+                        placeholder='10'
+                        value={create_procedure_duration}
+                        onChange={(e) => set_create_procedure_duration(e.target.value)}
+                    />
+                    {/* TODO: this should be a drop down */}
+                    <input
+                        type='text'
+                        placeholder='New Required Role'
+                        value={create_procedure_required_role}
+                        onChange={(e) => set_create_procedure_required_role(e.target.value)}
+                    />
                     <button onClick={handleCreateProcedure}>Create New Procedure</button>
                     {message && <p>{message}</p>}
 
@@ -138,10 +155,10 @@ const handleGetProcedures = async () => {
 
                     <h2>Delete Procedure</h2>
                     <input
-                        type="number"
-                        placeholder="Procedure ID"
-                        value={delete_procedure_id}
-                        onChange={(e) => set_delete_procedure_id(e.target.value)}
+                        type="text"
+                        placeholder="Procedure Name"
+                        value={delete_procedure_name}
+                        onChange={(e) => set_delete_procedure_name(e.target.value)}
                     />
                     <button onClick={handleDeleteProcedure}>Delete Procedure</button>
                     {message && <p>{message}</p>}

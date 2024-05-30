@@ -1,7 +1,8 @@
 /.vscode
 /venv
 __pycach__/
-*/__pycach__/
+backend/__pycach__/
+/backend/blueprints/__pycache__/
 db_user.config
 
 # ------- React ignore template -----------------------

@@ -17,8 +17,8 @@ def departments():
          elif request.method == 'PUT':
              print(f"Incoming PUT data: {request.get_json()}")
              data = request.get_json()
-             department_id = int(data.get('update_department_id'))
-             department_new_name = data.get('update_department_new_name')
+             department_id = int(data.get('id'))
+             department_new_name = data.get('name')
              query = f"UPDATE Departments SET name = %s WHERE department_id = %s;"
              print(f"Query: {query}")
              cur = mysql.connection.cursor()
@@ -32,7 +32,7 @@ def departments():
          elif request.method == 'POST':
              print(f"Incoming POST data: {request.get_json()}")
              data = request.get_json()
-             department_new_name = data.get('create_department_new_name')
+             department_new_name = data.get('name')
              query = "INSERT INTO Departments(name) VALUES (%s);"
              print(f"Query: {query}")
              cur = mysql.connection.cursor()
@@ -45,7 +45,7 @@ def departments():
          elif request.method == 'DELETE':
              print(f"Incoming DELETE data: {request.get_json()}")
              data = request.get_json()
-             department_id = int(data.get('delete_department_id'))
+             department_id = int(data.get('id'))
              query = f"DELETE FROM Departments WHERE department_id = %s;"
              print(f"Query: {query}")
              cur = mysql.connection.cursor()
@@ -60,6 +60,3 @@ def departments():
      except Exception as e:
          print(f"Err in executing SQL for Departments endpoint:\n{e}")
          return jsonify(error=str(e)),500
-     if(cur):
-         cur.close()
-     return json.dumps(str(results))
