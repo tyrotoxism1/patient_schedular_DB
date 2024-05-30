@@ -42,7 +42,6 @@ function App() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
       });
 
       setMessage('Department updated successfully!');
@@ -63,7 +62,6 @@ function App() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
       });
 
       setMessage('New department created successfully!');
@@ -90,7 +88,7 @@ function App() {
       fetchDepartments();
     } catch (error) {
       console.error('Error:', error);
-      setMessage('An error occurred while Deleting department.');
+      setMessage('An error occurred while deleting the department.');
     }
   };
 
