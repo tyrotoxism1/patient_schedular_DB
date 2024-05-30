@@ -44,4 +44,4 @@ frontend/.yarn-integrity
 frontend/node_modules
 
 #python cache
-backend/__pycach__
+backend/__pycache__/
