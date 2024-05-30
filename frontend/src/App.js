@@ -1,83 +1,93 @@
-import React, { useState, useEffect } from 'react'
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import JsonDataDisplay from './components/table';
+import './App.css';
 
 function App() {
-  const [department_id, set_department_id] = useState('');
-  const [department_new_name, set_department_new_name] = useState('');
+  const [update_department_id, set_update_department_id] = useState('');
+  const [update_department_new_name, set_update_department_new_name] = useState('');
+  const [create_department_new_name, set_create_department_new_name] = useState('');
+  const [delete_department_id, set_delete_department_id] = useState('');
+  const [department_data, set_department_data] = useState([]);
   const [message, setMessage] = useState('');
+
+  const fetchDepartments = async () => {
+    try {
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      const response = await axios.get(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log(response.data);
+      set_department_data(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('An error occurred while getting the departments.');
+    }
+  };
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
 
   const handleUpdateDepartment = async () => {
     const data = {
-      department_id,
-      department_new_name,
+      id: update_department_id, // Ensure backend expects this format
+      name: update_department_new_name, // Ensure backend expects this format
     };
-     try {
-      const response = await fetch('/Departments', {
-        method: 'PUT',
+    try {
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      await axios.put(URL, data, {
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
+      setMessage('Department updated successfully!');
+      fetchDepartments();
     } catch (error) {
       console.error('Error:', error);
-      setMessage('An error occurred while updating the departments.');
-    }
-  };
-  
-  const handleCreateDepartment= async () => {
-    const data = {
-      department_new_name,
-    };
-     try {
-      const response = await fetch('/Departments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while creating new department.');
+      setMessage('An error occurred while updating the department.');
     }
   };
 
-const handleDeleteDepartment= async () => {
+  const handleCreateDepartment = async () => {
     const data = {
-      department_id,
+      name: create_department_new_name, // Ensure backend expects this format
     };
-     try {
-      const response = await fetch('/Departments', {
-        method: 'DELETE',
+    try {
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      await axios.post(URL, data, {
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
 
-      const result = await response.json();
+      setMessage('New department created successfully!');
+      fetchDepartments();
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('An error occurred while creating the new department.');
+    }
+  };
 
-      if (response.ok) {
-        setMessage(result.message);
-      } else {
-        setMessage(result.message);
-      }
+  const handleDeleteDepartment = async () => {
+    try {
+      const URL = import.meta.env.VITE_API_URL + "Departments";
+      await axios.delete(URL, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        data: {
+          delete_department_id
+        },
+      });
+
+      setMessage('Department deleted successfully!');
+      fetchDepartments();
     } catch (error) {
       console.error('Error:', error);
       setMessage('An error occurred while Deleting department.');
@@ -85,76 +95,63 @@ const handleDeleteDepartment= async () => {
   };
 
   const handleGetDepartments = async () => {
-     try {
-      const response = await fetch('/Departments', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage(result.message);
-        console.log(result)
-      } else {
-        setMessage(result.message);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while Getting department data.');
-    }
+    fetchDepartments();
   };
 
-  
   return (
     <div className="App">
-      <header className="App-update_department">
-        <h1>Update Departments</h1>
-        <input
-          type="number"
-          placeholder="Department department_id"
-          value={department_id}
-          onChange={(e) => set_department_id(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="department_new_name"
-          value={department_new_name}
-          onChange={(e) => set_department_new_name(e.target.value)}
-        />
-        <button onClick={handleUpdateDepartment}>Update Department</button>
-        {message && <p>{message}</p>}
+      <header className="App-header">
+        <h1>Department Management</h1>
       </header>
-      <div>
-        <h1>Create Department</h1>
-        <input
-          type="text"
-          placeholder="Department Name"
-          value={department_new_name}
-          onChange={(e) => set_department_new_name(e.target.value)}
-        />
-        <button onClick={handleCreateDepartment}>Create New Department</button>
-        {message && <p>{message}</p>}
-      </div>
-      <div>
-        <h1>GET Department</h1>
-        <button onClick={handleGetDepartments}>Get Department</button>
-        {message && <p>{message}</p>}
-      </div>
-      <div>
-        <h1>Delete Department</h1>
-        <input
-          type="number"
-          placeholder="Department ID"
-          value={department_id}
-          onChange={(e) => set_department_id(e.target.value)}
-        />
-        <button onClick={handleDeleteDepartment}>DELETE Department</button>
-        {message && <p>{message}</p>}
-      </div>
+      <div className="App-body">
+        <div className="right-half">
+          <h2>Department Table</h2>
+          <JsonDataDisplay JSONdata={department_data} />
+        </div>
 
+        <div className="left-half">
+          <h2>Update Departments</h2>
+          <input
+            type="number"
+            placeholder="Department ID"
+            value={update_department_id}
+            onChange={(e) => set_update_department_id(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="New Department Name"
+            value={update_department_new_name}
+            onChange={(e) => set_update_department_new_name(e.target.value)}
+          />
+          <button onClick={handleUpdateDepartment}>Update Department</button>
+          {message && <p>{message}</p>}
+
+          <h2>Create Department</h2>
+          <input
+            type="text"
+            placeholder="Department Name"
+            value={create_department_new_name}
+            onChange={(e) => set_create_department_new_name(e.target.value)}
+          />
+          <button onClick={handleCreateDepartment}>Create New Department</button>
+          {message && <p>{message}</p>}
+
+          <h2>Get Departments</h2>
+          <button onClick={handleGetDepartments}>Get Departments</button>
+          {message && <p>{message}</p>}
+
+          <h2>Delete Department</h2>
+          <input
+            type="number"
+            placeholder="Department ID"
+            value={delete_department_id}
+            onChange={(e) => set_delete_department_id(e.target.value)}
+          />
+          <button onClick={handleDeleteDepartment}>Delete Department</button>
+          {message && <p>{message}</p>}
+        </div>
+
+      </div>
     </div>
   );
 }

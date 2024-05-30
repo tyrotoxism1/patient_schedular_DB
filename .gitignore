@@ -42,3 +42,6 @@ frontend/.yarn-integrity
 
 #Node modules
 frontend/node_modules
+
+#python cache
+backend/__pycach__

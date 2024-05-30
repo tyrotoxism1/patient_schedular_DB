@@ -85,8 +85,8 @@ def departments():
         elif request.method == 'PUT':
             print(f"Incoming PUT data: {request.get_json()}")
             data = request.get_json()
-            department_id = int(data.get('department_id'))
-            department_new_name = data.get('department_new_name')
+            department_id = int(data.get('update_department_id'))
+            department_new_name = data.get('update_department_new_name')
             query = f"UPDATE Departments SET name = %s WHERE department_id = %s;"
             print(f"Query: {query}")
             cur = mysql.connection.cursor()
@@ -100,7 +100,7 @@ def departments():
         elif request.method == 'POST':
             print(f"Incoming POST data: {request.get_json()}")
             data = request.get_json()
-            department_new_name = data.get('department_new_name')
+            department_new_name = data.get('create_department_new_name')
             query = "INSERT INTO Departments(name) VALUES (%s);"
             print(f"Query: {query}")
             cur = mysql.connection.cursor()
@@ -113,7 +113,7 @@ def departments():
         elif request.method == 'DELETE':
             print(f"Incoming DELETE data: {request.get_json()}")
             data = request.get_json()
-            department_id = int(data.get('department_id'))
+            department_id = int(data.get('delete_department_id'))
             query = f"DELETE FROM Departments WHERE department_id = %s;"
             print(f"Query: {query}")
             cur = mysql.connection.cursor()
@@ -184,7 +184,7 @@ def schedules():
 # Listener
 if __name__ == "__main__":
     #Start the app on port 3000, it will be different once hosted
-    app.run(host='classwork.engr.oregonstate.edu', port=4549, debug=True)
+    app.run(host='classwork.engr.oregonstate.edu', port=4539, debug=True)
     #app.run()
 
 
