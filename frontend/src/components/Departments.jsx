@@ -102,7 +102,7 @@ const handleGetDepartments = async () => {
             <div className="App-body">
                 <div className="right-half">
                     <h2>Department Table</h2>
-                    <JsonDataDisplay JSONdata={department_data} />
+                    <JsonDataDisplay JSONdata={department_data} endpoint={"Departments"} />
                 </div>
 
                 <div className="left-half">

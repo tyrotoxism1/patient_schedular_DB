@@ -1,6 +1,7 @@
 /.vscode
 /venv
 __pycach__/
+*/__pycach__/
 db_user.config
 
 # ------- React ignore template -----------------------

@@ -5,20 +5,27 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-function JSONTableDisplay({ JSONdata }) {
+function JSONTableDisplay({ JSONdata, endpoint }) {
     const [data, setData] = useState(JSONdata || []);
 
     useEffect(() => {
         if (!JSONdata || JSONdata.length === 0) {
             const GetDepartmentData = async () => {
                 try {
-                    const URL = import.meta.env.VITE_API_URL + "Departments";
+                    console.log(endpoint)
+                    const URL = import.meta.env.VITE_API_URL + endpoint;
                     const response = await axios.get(URL, {
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
-                    setData(response.data);
+                    const responseData = response.data;
+                    if(Array.isArray(responseData)){
+                        setData(responseData);
+                    }
+                    else{
+                        console.error("Error: API response not an array")
+                    }
                 } catch (error) {
                     console.error('Error:', error);
                 }

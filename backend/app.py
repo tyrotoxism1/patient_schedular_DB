@@ -1,9 +1,16 @@
-from flask import Flask, render_template, json, jsonify, redirect, request
+from flask import Flask #render_template, json, jsonify, redirect, request
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 import configparser
 #blueprint views
-import blueprints.employees
+from blueprints.employees import employee_page 
+from blueprints.home import home_page 
+from blueprints.patients import patient_page 
+from blueprints.departments import department_page 
+from blueprints.schedules import schedule_page 
+from blueprints.procedures import procedure_page 
+from blueprints.employee_has_schedule import employee_has_schedule_page 
+from blueprints.patients_has_schedule import patient_has_schedule_page 
 
 #Read config data for MySQL login. Takes in return_field which is the desired field retreived from the config.
 #pass "user" for user field from config or "ps" for password.
@@ -29,158 +36,16 @@ app.config['MYSQL_PASSWORD'] = read_config("ps")
 app.config['MYSQL_DB'] = 'cs340_janzenm'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 CORS(app)
-
-
 mysql = MySQL(app)
+app.register_blueprint(employee_page)
+app.register_blueprint(home_page)
+app.register_blueprint(patient_page)
+app.register_blueprint(department_page)
+app.register_blueprint(schedule_page)
+app.register_blueprint(procedure_page)
+app.register_blueprint(employee_has_schedule_page)
+app.register_blueprint(patient_has_schedule_page)
 
-
-# Routes
-@app.route('/')
-def root():
-    query = "SELECT * FROM Patients;"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    # cur.execute(query2)
-    # cur.execute(query3)
-    # cur.execute(query4)
-    results = cur.fetchall()
-
-    return jsonify(results)
-
-@app.route('/Patients', methods=['GET'])
-def patients():
-    query = "SELECT * FROM Patients;"
-    cur = mysql.connection.cursor()
-    cur.execute(query)
-    # cur.execute(query2)
-    # cur.execute(query3)
-    # cur.execute(query4)
-    results = cur.fetchall()
-
-    return jsonify(results)
-
-# @app.route('/Employees')
-# def employees():
-#     query = "SELECT * FROM Employees;"
-#     cur = mysql.connection.cursor()
-#     cur.execute(query)
-
-#     # cur.execute(query2)
-#     # cur.execute(query3)
-#     # cur.execute(query4)
-#     results = cur.fetchall()
-
-#     return json.dumps(str(results))
-
-@app.route('/Departments', methods = ['POST', 'GET', 'PUT', 'DELETE'])
-def departments():
-    try:
-        if request.method == 'GET':
-            query = "SELECT * FROM Departments;"  
-            cur = mysql.connection.cursor()
-            cur.execute(query)
-            results = cur.fetchall()
-            cur.close()
-            return jsonify(results)  
-        # Update department name based on incoming department id
-        elif request.method == 'PUT':
-            print(f"Incoming PUT data: {request.get_json()}")
-            data = request.get_json()
-            department_id = int(data.get('update_department_id'))
-            department_new_name = data.get('update_department_new_name')
-            query = f"UPDATE Departments SET name = %s WHERE department_id = %s;"
-            print(f"Query: {query}")
-            cur = mysql.connection.cursor()
-            cur.execute(query, (department_new_name,department_id))
-            mysql.connection.commit()
-            results = cur.fetchall()
-            print(f"Result: {results}")
-            cur.close() 
-            return json.dumps(str(results))
-        # Create new department, id is automactically created so just need name
-        elif request.method == 'POST':
-            print(f"Incoming POST data: {request.get_json()}")
-            data = request.get_json()
-            department_new_name = data.get('create_department_new_name')
-            query = "INSERT INTO Departments(name) VALUES (%s);"
-            print(f"Query: {query}")
-            cur = mysql.connection.cursor()
-            cur.execute(query, (department_new_name,))
-            mysql.connection.commit()
-            department_id = cur.lastrowid
-            cur.close() 
-            return jsonify({"message": "Department created successfully", "department_id": department_id}), 201
-
-        elif request.method == 'DELETE':
-            print(f"Incoming DELETE data: {request.get_json()}")
-            data = request.get_json()
-            department_id = int(data.get('delete_department_id'))
-            query = f"DELETE FROM Departments WHERE department_id = %s;"
-            print(f"Query: {query}")
-            cur = mysql.connection.cursor()
-            cur.execute(query, (department_id,))
-            mysql.connection.commit()
-            results = cur.fetchall()
-            print(f"Result: {results}")
-            cur.close() 
-            return json.dumps(str(results))
-        else: 
-            return "Invalid Request Method", 405
-    except Exception as e:
-        print(f"Err in executing SQL for Departments endpoint:\n{e}")
-        return jsonify(error=str(e)),500
-    if(cur):
-        cur.close()
-    return json.dumps(str(results))
-
-
-@app.route('/Schedules', methods = ['POST', 'GET', 'PUT', 'DELETE'])
-def schedules():
-    if request.method == 'GET':
-        query = "SELECT * FROM Schedules;"
-        cur = mysql.connection.cursor()
-        cur.execute(query)
-
-    elif request.method == 'PUT':
-        print(request.get_json())
-        query1 = """INSERT INTO Schedules(
-                    date,
-                    time_slot,
-                    Procedures_procedure_name
-                    )VALUES(
-                    '2023-08-10 08:00:00',
-                    60,
-                    "Women\'s Health Exam"
-                    );"""
-        query2  = """SET @last_schedule_ID = LAST_INSERT_ID();"""
-        query3 = """INSERT INTO Patients_has_Schedule(
-                    Patients_patient_id,
-                    Schedule_slot_id
-                    )VALUES(
-                    2,
-                    @last_schedule_ID
-                    );"""
-        query4 = """INSERT INTO Employees_has_Schedule(
-                    Employees_employee_id,
-                    Schedule_slot_id
-                    )VALUES(
-                    5,
-                    @last_schedule_ID
-        );"""
-        try: 
-            cur = mysql.connection.cursor()
-            cur.execute(query1)
-            cur.execute(query2)
-            cur.execute(query3)
-            cur.execute(query4)
-
-        except Exception as e:
-            print(f"Error executing SQL in 'PUT' Method: {e}")
-    
-    # cur.execute(query4)
-    results = cur.fetchall()
-
-    return json.dumps(str(results))
 
 # Listener
 if __name__ == "__main__":

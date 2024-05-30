@@ -2,18 +2,17 @@ from flask import Blueprint, jsonify, request
 from flask_mysqldb import MySQL 
 
 mysql = MySQL()
-employee_page = Blueprint('employee_page',__name__)
+patient_page = Blueprint('patient_page',__name__)
 
-@employee_page.route('/Employees', methods = ['POST', 'GET', 'PUT', 'DELETE'])
-def employees():
+@patient_page.route('/Patients', methods = ['POST', 'GET', 'PUT', 'DELETE'])
+def patients():
     try: 
         if request.method == 'GET':
-            query = "SELECT * FROM Employees;"  
+            query = "SELECT * FROM Patients;"  
             cur = mysql.connection.cursor()
             cur.execute(query)
             results = cur.fetchall()
             cur.close()
-            print(results)
             return jsonify(results)  
 
     except Exception as e:
