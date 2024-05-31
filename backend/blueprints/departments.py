@@ -60,3 +60,14 @@ def departments():
      except Exception as e:
          print(f"Err in executing SQL for Departments endpoint:\n{e}")
          return jsonify(error=str(e)),500
+
+
+
+@department_page.route('/Departments/Names', methods = ['GET'])
+def department_names():
+    query = "SELECT department_id,name FROM Departments;"  
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    return jsonify(results)  
