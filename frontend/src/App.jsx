@@ -7,6 +7,8 @@ import Employee from './components/Employees';
 import Patient from './components/Patients';
 import Procedure from './components/Procedure';
 import Schedule from './components/Schedules'; 
+import Employee_has_schedule from './components/Employee_has_schedule';
+import Patient_has_schedule from './components/Patient_has_schedule';
 
 
 export default function App() {
@@ -33,6 +35,12 @@ export default function App() {
             <li>
               <Link to="/Schedules">Schedules</Link>
             </li>
+            <li>
+              <Link to="/Employee_has_Schedule">Employee_has_Schedule</Link>
+            </li>
+            <li>
+              <Link to="/Patient_has_Schedule">Patient_has_Schedule</Link>
+            </li>
 
           </ul>
         </nav>
@@ -44,6 +52,8 @@ export default function App() {
           <Route path="/Patients" element={<Patient/>} />
           <Route path="/Procedures" element={<Procedure/>} />
           <Route path="/Schedules" element={<Schedule/>} />
+          <Route path="/Employee_has_Schedule" element={<Employee_has_schedule/>} />
+          <Route path="/Patient_has_Schedule" element={<Patient_has_schedule/>} />
         </Routes>
       </div>
     </Router>
