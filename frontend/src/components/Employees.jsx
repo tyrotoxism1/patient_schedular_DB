@@ -8,8 +8,11 @@ import Dropdown from './dropdown';
 export default function Employee() {
   const [update_employee_id, set_update_employee_id] = useState('');
   const [update_employee_new_name, set_update_employee_new_name] = useState('');
+  const [update_employee_new_role, set_update_employee_new_role] = useState('');
   const [departmentNames, setDepartmentNames] = useState([]);
+  const [selectedDepartment,setSelectedDepartment] = useState([]);
   const [create_employee_new_name, set_create_employee_new_name] = useState('');
+  const [create_employee_new_role, set_create_employee_new_role] = useState('');
   const [delete_employee_id, set_delete_employee_id] = useState('');
   const [employee_data, set_employee_data] = useState([]);
   const [message, setMessage] = useState('');
@@ -38,16 +41,19 @@ export default function Employee() {
     const data = {
       id: update_employee_id, // Ensure backend expects this format
       name: update_employee_new_name, // Ensure backend expects this format
+      role: update_employee_new_role,
     };
     try {
       const URL = import.meta.env.VITE_API_URL + "Employees";
-      await axios.put(URL, data, {
+      const response = await axios.put(URL, data, {
         headers: {
           'Content-Type': 'application/json'
         },
       });
 
-      setMessage('Employee updated successfully!');
+      if (response.data.error) {
+        setMessage(response.data.error)
+      }
       fetchEmployees();
     } catch (error) {
       console.error('Error:', error);
@@ -57,7 +63,9 @@ export default function Employee() {
 
   const handleCreateEmployee = async () => {
     const data = {
-      name: create_employee_new_name, // Ensure backend expects this format
+      name: create_employee_new_name,
+      role: create_employee_new_role,
+      department: selectedDepartment,
     };
     try {
       const URL = import.meta.env.VITE_API_URL + "Employees";
@@ -83,7 +91,7 @@ export default function Employee() {
           'Content-Type': 'application/json'
         },
         data: {
-          delete_employee_id
+          id: delete_employee_id
         },
       });
 
@@ -122,6 +130,10 @@ export default function Employee() {
     handleGetDepartmentNames();
   }, []);
 
+  const handleSelectedChange = (selectedValue) => {
+    setSelectedDepartment(selectedValue)
+  };
+
   return (
     <div>
       <header className="App-header">
@@ -147,6 +159,12 @@ export default function Employee() {
             value={update_employee_new_name}
             onChange={(e) => set_update_employee_new_name(e.target.value)}
           />
+          <input
+            type="text"
+            placeholder="New Employee Role"
+            value={update_employee_new_role}
+            onChange={(e) => set_update_employee_new_role(e.target.value)}
+          />
           <button onClick={handleUpdateEmployee}>Update Employee</button>
           {message && <p>{message}</p>}
 
@@ -157,7 +175,13 @@ export default function Employee() {
             value={create_employee_new_name}
             onChange={(e) => set_create_employee_new_name(e.target.value)}
           />
-          <Dropdown option_arr={departmentNames} />
+          <input
+            type="text"
+            placeholder="Employee Role"
+            value={create_employee_new_role}
+            onChange={(e) => set_create_employee_new_role(e.target.value)}
+          />
+          <Dropdown optionArr={departmentNames} onSelectChange={handleSelectedChange} itemLabel={"Department ID: "} />
           <button onClick={handleCreateEmployee}>Create New Employee</button>
           {message && <p>{message}</p>}
 

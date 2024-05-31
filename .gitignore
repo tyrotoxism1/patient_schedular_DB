@@ -48,3 +48,8 @@ frontend/node_modules
 #python cache
 backend/__pycache__/
 backend/blueprints/__pycache__/procedures.cpython-39.pyc
+backend/blueprints/__pycache__/departments.cpython-39.pyc
+backend/blueprints/__pycache__/departments.cpython-39.pyc
+backend/blueprints/__pycache__/employees.cpython-39.pyc
+backend/blueprints/__pycache__/patients.cpython-39.pyc
+backend/blueprints/__pycache__/procedures.cpython-39.pyc

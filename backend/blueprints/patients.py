@@ -80,7 +80,8 @@ def patients():
             print(f"Result: {results}")
             cur.close() 
             return jsonify(results)
-
+        else: 
+             return "Invalid Request Method", 405
  
 
     except Exception as e:

@@ -4,24 +4,24 @@ from flask_mysqldb import MySQL
 mysql = MySQL()
 employee_page = Blueprint('employee_page',__name__)
 
-def execute_update_query(mysql_cur:MySQL, patient_id:int, patient_new_name, patient_new_email):
+def execute_update_query(mysql_cur:MySQL, employee_id:int, employee_new_name, employee_new_role):
     query = ""
-    if(not patient_id):
+    if(not employee_id):
         return  
-    # If we have both valid params for updating patient
-    if(patient_new_name!="" and patient_new_email!=""):
-        query = "UPDATE Patients SET name=%s,email=%s WHERE patient_id=%s;"
-        mysql_cur.execute(query, (patient_new_name,patient_new_email,patient_id))
+    # If we have both valid params for updating employee
+    if(employee_new_name!="" and employee_new_role!=""):
+        query = "UPDATE Employees SET name=%s,role=%s WHERE employee_id=%s;"
+        mysql_cur.execute(query, (employee_new_name,employee_new_role,employee_id))
         return "Success"
     # If we only get valid name and no email 
-    elif(patient_new_name!="" and patient_new_email==""):
-        query = "UPDATE Patients SET name=%s WHERE patient_id=%s;"
-        mysql_cur.execute(query, (patient_new_name,patient_id))
+    elif(employee_new_name!="" and employee_new_role==""):
+        query = "UPDATE Employees SET name=%s WHERE employee_id=%s;"
+        mysql_cur.execute(query, (employee_new_name,employee_id))
         return "Success"
     # If we only get valid email and no name 
-    elif(patient_new_name=="" and patient_new_email!=""):
-        query = "UPDATE Patients SET email=%s WHERE patient_id=%s;"
-        mysql_cur.execute(query, (patient_new_email,patient_id))
+    elif(employee_new_name=="" and employee_new_role!=""):
+        query = "UPDATE Employees SET role=%s WHERE employee_id=%s;"
+        mysql_cur.execute(query, (employee_new_role,employee_id))
         return "Success"
 
 
@@ -38,19 +38,51 @@ def employees():
         # Update employee based on employee id 
         elif request.method == 'PUT':
             data = request.get_json()
-            patient_id= int(data.get('id'))
-            patient_new_name = data.get('name')
-            patient_new_email = data.get('email')
+            if(data.get('id')==''):
+                return jsonify(error="Failed to provide Employee ID")
+            employee_id= int(data.get('id'))
+            employee_new_name = data.get('name')
+            employee_new_role = data.get('role')
 
             cur = mysql.connection.cursor()
-            query_exec_result = execute_update_query(cur,patient_id,patient_new_name, patient_new_email)
+            query_exec_result = execute_update_query(cur,employee_id,employee_new_name, employee_new_role)
             if(query_exec_result==None):
-                raise Exception("Failed to execute UPDATE query in Patientes endpoint") 
+                raise Exception("Executing Employee Update Query Failed")
             elif(query_exec_result == "Success"):
                 mysql.connection.commit()
             results = cur.fetchall()
             cur.close() 
             return jsonify(results)
+        elif request.method == 'POST':
+            print(f"Incoming POST data: {request.get_json()}")
+            data = request.get_json()
+            employee_new_name = data.get('name')
+            employee_new_role = data.get('role')
+            employee_new_department = int(data.get('department'))
+            query = "INSERT INTO Employees(name,role,Departments_department_id) VALUES (%s,%s,%s);"
+            print(f"Query: {query}")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (employee_new_name,employee_new_role,employee_new_department))
+            mysql.connection.commit()
+            patient_id = cur.lastrowid
+            cur.close() 
+            return jsonify({"message": "procedure created successfully", "procedure_id": patient_id}), 201
+        elif request.method == 'DELETE':
+            data = request.get_json()
+            employee_id = int(data.get('id'))
+            query = f"DELETE FROM Employees WHERE employee_id = %s;"
+            print(f"Query: {query}")
+            cur = mysql.connection.cursor()
+            cur.execute(query, (employee_id,))
+            mysql.connection.commit()
+            results = cur.fetchall()
+            cur.close() 
+            return jsonify(results)
+        else: 
+             return "Invalid Request Method", 405
+
+
+
 
 
     except Exception as e:
