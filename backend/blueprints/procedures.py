@@ -67,3 +67,11 @@ def procedure():
         return jsonify(error=str(e)),500
 
 
+@procedure_page.route('/Procedures/Names', methods = ['GET'])
+def procedure_names():
+    query = "SELECT procedure_name FROM Procedures;"  
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    return jsonify(results)  

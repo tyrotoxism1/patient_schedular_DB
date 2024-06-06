@@ -37,6 +37,8 @@ app.config['MYSQL_DB'] = 'cs340_janzenm'
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 CORS(app)
 mysql = MySQL(app)
+# Blueprint reference https://stackoverflow.com/questions/11994325/how-to-divide-flask-app-into-multiple-py-files and 
+# https://flask.palletsprojects.com/en/2.2.x/blueprints/
 app.register_blueprint(employee_page)
 app.register_blueprint(home_page)
 app.register_blueprint(patient_page)
@@ -50,7 +52,7 @@ app.register_blueprint(patient_has_schedule_page)
 # Listener
 if __name__ == "__main__":
     #Start the app on port 3000, it will be different once hosted
-    app.run(host='classwork.engr.oregonstate.edu', port=4540, debug=True)
+    app.run(host='classwork.engr.oregonstate.edu', port=4240, debug=True)
     #app.run()
 
 

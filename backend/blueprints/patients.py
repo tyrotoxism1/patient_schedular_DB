@@ -89,3 +89,12 @@ def patients():
         return jsonify(error=str(e)),500
 
 
+
+@patient_page.route('/Patients/Names', methods = ['GET'])
+def get_patient_names():
+    query = "SELECT name FROM Patients;"  
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    return jsonify(results)  
