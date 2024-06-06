@@ -12,6 +12,9 @@ export default function Schedule() {
   const [createSchedulePatient, setCreateSchedulePatient] = useState('');
   const [createScheduleProcedure, setCreateScheduleProcedure] = useState('');
   const [createScheduleDate, setCreateScheduleDate] = useState('');
+  const [updateScheduleDate, setUpdateScheduleDate] = useState('');
+  const [updateSchedulePatient, setUpdateSchedulePatient] = useState('');
+  const [updateScheduleProcedure, setUpdateScheduleProcedure] = useState('');
   const [delete_schedule_id, set_delete_schedule_id] = useState('');
   const [schedule_data, set_schedule_data] = useState([]);
   const [message, setMessage] = useState('');
@@ -55,7 +58,7 @@ export default function Schedule() {
     handleGetProcedureNames();
   }, []);
 
-const handleGetPatientNames = async () => {
+  const handleGetPatientNames = async () => {
     try {
       const URL = import.meta.env.VITE_API_URL + 'Patients/Names';
       const response = await axios.get(URL, {
@@ -78,8 +81,9 @@ const handleGetPatientNames = async () => {
 
   const handleUpdateSchedule = async () => {
     const data = {
-      id: update_schedule_id, // Ensure backend expects this format
-      name: update_schedule_new_name, // Ensure backend expects this format
+      patient_name: updateSchedulePatient,
+      date: updateScheduleDate,
+      procedure: updateScheduleProcedure
     };
     try {
       const URL = import.meta.env.VITE_API_URL + "Schedules";
@@ -139,14 +143,24 @@ const handleGetPatientNames = async () => {
     }
   };
 
-  // For drop down menu selection, capture selected value
-  const handleSelectedProcedureChange = (selectedValue) => {
+  // For drop down menu selection of creating schedule, capture selected value
+  const handleSelectedCreateProcedureChange = (selectedValue) => {
     setCreateScheduleProcedure(selectedValue)
   };
-  // For drop down menu selection, capture selected value
-  const handleSelectedPatientChange = (selectedValue) => {
+  // For drop down menu selection of creating schedule, capture selected value
+  const handleSelectedCreatePatientChange = (selectedValue) => {
     setCreateSchedulePatient(selectedValue)
   };
+
+  // For drop down menu selection of updating schedule, capture selected value
+  const handleSelectedUpdateProcedureChange = (selectedValue) => {
+    setUpdateScheduleProcedure(selectedValue)
+  };
+  // For drop down menu selection of updatingschedule, capture selected value
+  const handleSelectedUpdatePatientChange = (selectedValue) => {
+    setUpdateSchedulePatient(selectedValue)
+  };
+
 
   const handleGetSchedules = async () => {
     fetchSchedules();
@@ -169,16 +183,33 @@ const handleGetPatientNames = async () => {
 
           <h2>Create Appoitment</h2>
           <input
-            type='date'
+            type='datetime-local'
             placeholder='Date of appoitnment'
             value={createScheduleDate}
             onChange={(e) => setCreateScheduleDate(e.target.value)}
           />
-          <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedProcedureChange}/>
-          <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedPatientChange}/>
-          
+          <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedCreateProcedureChange} />
+          <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedCreatePatientChange} />
+
           <button onClick={handleCreateSchedule}>Create Appoitment</button>
           {message && <p>{message}</p>}
+
+          <h2>Update Appoitment</h2>
+          <label htmlFor="appointment-datetime">Updated Date of Appointmnet(leave blank to keep same date):</label>
+          <input
+            type='datetime-local'
+            placeholder='Date of appoitnment'
+            value={updateScheduleDate}
+            onChange={(e) => setUpdateScheduleDate(e.target.value)}
+          />
+          <label htmlFor="appointment-procedure">Update Procedure(leave blank to keep same date):</label>
+          <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedUpdateProcedureChange} />
+          <label htmlFor="appointment-procedure">Name of Recipient of Procedure</label>
+          <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedUpdatePatientChange} />
+
+          <button onClick={handleUpdateSchedule}>Create Appoitment</button>
+          {message && <p>{message}</p>}
+
 
 
         </div>
