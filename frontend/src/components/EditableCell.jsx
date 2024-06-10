@@ -2,33 +2,24 @@ import { Input } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import axios from 'axios'; // Import axios for making API requests
 
-const EditableCell = ({ getValue, column, row, table, rowIndex, updateData, endpoint }) => {
+const EditableCell = ({ getValue, column, row, table, endpoint }) => {
     const initialValue = getValue();
     const [value, setValue] = useState(initialValue);
-
     const [originalValue, setOriginalValue] = useState(initialValue); // Track original value
     const [isEditing, setIsEditing] = useState(false); // Track editing state
 
     const handleBlur = async () => {
-        //setIsEditing(false); // Disable editing
+        // Disable editing
+        setIsEditing(false); 
         // If the value has changed
         if (value !== initialValue) {
-            console.log("IsNewRow?",row.original.delete_row);
-            const newRow = row.original.delete_row; 
-            //updateData(column.id, value);
-            // Make API request to update value
-            const updatedRow = {
-                ...row.original,
-                [column.id]: value,
-            };
-            console.log("in handleBlur val: ", value)
-            //const updatedRow = {
-            //    [column.id]: value,
-            //};
-            if (column.isNew === false ) {
+            //Grab the new row data
+            const updatedRow = {...row.original,[column.id]: value,};
+            //If this cell is being edited for a new row, don't make API call yet, if it is not a new row, then make PUT API request
+            if (table.options.addingRowInProgress===false) {
+                // Make API request to update value
                 try {
                     const URL = import.meta.env.VITE_API_URL + endpoint;
-                    //When editing a cell, it'll always be an update or PUT request
                     const response = await axios.put(URL, updatedRow, {
                         headers: {
                             'Content-Type': 'application/json'
@@ -37,19 +28,17 @@ const EditableCell = ({ getValue, column, row, table, rowIndex, updateData, endp
                     console.log('API response:', response);
                     // If request succeeds, update original value
                     setOriginalValue(value);
-                } catch (error) {
+                } 
+                catch (error) {
                     console.error('API request error:', error);
                     // If request fails, revert to original value
                     setValue(originalValue);
                     //Create error message to display here?
                 }
             }
+            //If we are adding a row, update the data for the cell 
             else {
-                //setValue(value);
-                console.log("Row index", row.id);
-                console.log("column id", column.id);
-                console.log("value:", value);
-                updateData(row.id,column.id,value);
+                table.options.meta?.updateData(row.index,column.id,value);
             }
         }
     };

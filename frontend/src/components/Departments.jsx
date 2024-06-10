@@ -53,7 +53,7 @@ export default function Department() {
       console.log('Row deleted:', response.data);
 
       // Update the table data (remove the deleted row)
-      const updatedData = initialData.filter((row) => row.patient_id !== patientID);
+      const updatedData = initialData.filter((row) => row.department_id!== departmentID);
       setInitialData(updatedData);
     } catch (error) {
       console.error('API request error:', error);

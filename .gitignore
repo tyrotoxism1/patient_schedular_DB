@@ -4,7 +4,7 @@ __pycach__/*
 backend/__pycach__/*
 /backend/blueprints/__pycache__/*
 db_user.config
-
+__pycache__/
 # ------- React ignore template -----------------------
 # Logs
 frontend/logs
