@@ -17,6 +17,7 @@ export default function Employee() {
   const [create_employee_new_role, set_create_employee_new_role] = useState('');
   const [delete_employee_id, set_delete_employee_id] = useState('');
   const [employee_data, set_employee_data] = useState([]);
+  const { TableDataProvider, useTableData } = createNewTableContext();
   const [initialData, setInitialData] = useState([]);
 
   // Fetch data from API when component mounts
