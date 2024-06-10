@@ -83,7 +83,7 @@ export default function Patient() {
     {
       accessorKey: 'date_of_birth',
       header: 'Date of Birth',
-      cell: DateCell, 
+      cell: (props) => <DateCell {...props} endpoint="Patients" addTime={false} />,
       editable: true,
       isNew: false
     },
@@ -106,7 +106,7 @@ export default function Patient() {
       header: '',
       cell: (props) => (
         <DeleteIcon
-          onClick={() => handleDeleteRow(props.row.original.department_id)} // Call handleDeleteRow function
+          onClick={() => handleDeleteRow(props.row.original.patient_id)} // Call handleDeleteRow function
           cursor="pointer"
           color="red.500"
         />
@@ -119,7 +119,7 @@ export default function Patient() {
   return (
     <div>
       <header className="App-header">
-        <h1>Department Management</h1>
+        <h1>Patient Management</h1>
       </header>
       <div className="App-body">
         <TableDataProvider initialData={initialData}>

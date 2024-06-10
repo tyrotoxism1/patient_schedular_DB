@@ -79,7 +79,7 @@ const EditableTable = ({ columns, endpoint }) => {
         console.log(column)
         const cellValue = newRow[column.accessorKey];
         console.log(cellValue);
-        return !cellValue || cellValue.trim() === '';
+        return !cellValue 
       }
       return false;
     });
@@ -94,7 +94,7 @@ const EditableTable = ({ columns, endpoint }) => {
     //If all editable cells were populated, attempt to make POST request
     try {
       // Make POST API request to save the new row
-      const URL = import.meta.env.VITE_API_URL + endpoint; // Replace with your endpoint
+      const URL = import.meta.env.VITE_API_URL + endpoint; 
       const response = await axios.post(URL, table.getRowModel().rows[rowIndex].original, {
         headers: {
           'Content-Type': 'application/json'
