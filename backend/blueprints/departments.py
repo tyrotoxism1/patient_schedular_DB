@@ -17,7 +17,7 @@ def departments():
          elif request.method == 'PUT':
              print(f"Incoming PUT data: {request.get_json()}")
              data = request.get_json()
-             department_id = int(data.get('id'))
+             department_id = int(data.get('department_id'))
              department_new_name = data.get('name')
              query = f"UPDATE Departments SET name = %s WHERE department_id = %s;"
              print(f"Query: {query}")
@@ -30,22 +30,27 @@ def departments():
              return json.dumps(str(results))
          # Create new department, id is automactically created so just need name
          elif request.method == 'POST':
-             print(f"Incoming POST data: {request.get_json()}")
-             data = request.get_json()
-             department_new_name = data.get('name')
-             query = "INSERT INTO Departments(name) VALUES (%s);"
-             print(f"Query: {query}")
-             cur = mysql.connection.cursor()
-             cur.execute(query, (department_new_name,))
-             mysql.connection.commit()
-             department_id = cur.lastrowid
-             cur.close() 
-             return jsonify({"message": "Department created successfully", "department_id": department_id}), 201
+            try:
+                print(f"Incoming POST data: {request.get_json()}")
+                data = request.get_json()
+                department_new_name = data.get('name')
+                if(department_new_name==''):
+                    raise Exception("New Department Name is Blank. Please Provide Valid Name")
+                query = "INSERT INTO Departments(name) VALUES (%s);"
+                print(f"Query: {query}")
+                cur = mysql.connection.cursor()
+                cur.execute(query, (department_new_name,))
+                mysql.connection.commit()
+                department_id = cur.lastrowid
+                cur.close() 
+                return jsonify({"message": "Department created successfully", "department_id": department_id}), 201
+            except Exception as e:
+                return jsonify(error=str(e)),500
 
          elif request.method == 'DELETE':
              print(f"Incoming DELETE data: {request.get_json()}")
              data = request.get_json()
-             department_id = int(data.get('id'))
+             department_id = int(data.get('department_id'))
              query = f"DELETE FROM Departments WHERE department_id = %s;"
              print(f"Query: {query}")
              cur = mysql.connection.cursor()
@@ -54,7 +59,7 @@ def departments():
              results = cur.fetchall()
              print(f"Result: {results}")
              cur.close() 
-             return json.dumps(str(results))
+             return "Sucess", 202  
          else: 
              return "Invalid Request Method", 405
      except Exception as e:

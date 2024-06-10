@@ -4,9 +4,6 @@ import React, { useState, useEffect } from 'react';
 import Dropdown from './dropdown';
 
 export default function Schedule() {
-  const [update_schedule_id, set_update_schedule_id] = useState('');
-  const [update_schedule_new_name, set_update_schedule_new_name] = useState('');
-
   const [ProcedureNames, setProcedureNames] = useState([]);
   const [PatientNames, setPatientNames] = useState([]);
   const [createSchedulePatient, setCreateSchedulePatient] = useState('');
@@ -195,14 +192,14 @@ export default function Schedule() {
           {message && <p>{message}</p>}
 
           <h2>Update Appoitment</h2>
-          <label htmlFor="appointment-datetime">Updated Date of Appointmnet(leave blank to keep same date):</label>
+          <label htmlFor="appointment-datetime">Updated Date of Appointmnet(Unchanged date will keep previous date):</label>
           <input
             type='datetime-local'
             placeholder='Date of appoitnment'
             value={updateScheduleDate}
             onChange={(e) => setUpdateScheduleDate(e.target.value)}
           />
-          <label htmlFor="appointment-procedure">Update Procedure(leave blank to keep same date):</label>
+          <label htmlFor="appointment-procedure">Update Procedure(leave blank to keep same procedure):</label>
           <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedUpdateProcedureChange} />
           <label htmlFor="appointment-procedure">Name of Recipient of Procedure</label>
           <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedUpdatePatientChange} />

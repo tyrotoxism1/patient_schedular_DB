@@ -139,8 +139,6 @@ def schedules():
             print(f"Error executing SQL in 'POST' Method: {e}")
 
 
-
-
     elif request.method == 'PUT':
         print(request.get_json())
         query1 = """INSERT INTO Schedules(
