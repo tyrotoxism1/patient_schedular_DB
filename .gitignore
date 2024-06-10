@@ -3,6 +3,7 @@
 __pycach__/*
 backend/__pycach__/*
 /backend/blueprints/__pycache__/*
+backend/env/
 db_user.config
 __pycache__/
 # ------- React ignore template -----------------------
