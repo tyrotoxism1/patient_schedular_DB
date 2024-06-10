@@ -35,7 +35,7 @@ export default function Department() {
       }
     };
 
-    fetchData(); // Call the fetchData function
+    fetchData(); 
   }, []); // Empty dependency array ensures useEffect runs only once on mount
 
 
@@ -53,13 +53,14 @@ export default function Department() {
       console.log('Row deleted:', response.data);
 
       // Update the table data (remove the deleted row)
-      const updatedData = initialData.filter((row) => row.department_id!== departmentID);
+      const updatedData = initialData.filter((row) => row.department_id !== departmentID);
       setInitialData(updatedData);
     } catch (error) {
       console.error('API request error:', error);
       // Handle error (e.g., show error message to the user)
     }
   };
+
 
   const columns = [
     {
@@ -91,93 +92,6 @@ export default function Department() {
     }
   ]
 
-
-
-
-  const fetchDepartments = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Departments";
-      const response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log(response.data);
-      set_department_data(response.data);
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while getting the departments.');
-    }
-  };
-
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-
-  const handleUpdateDepartment = async () => {
-    const data = {
-      id: update_department_id, // Ensure backend expects this format
-      name: update_department_new_name, // Ensure backend expects this format
-    };
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Departments";
-      await axios.put(URL, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      setMessage('Department updated successfully!');
-      fetchDepartments();
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while updating the department.');
-    }
-  };
-
-  const handleCreateDepartment = async () => {
-    const data = {
-      name: create_department_new_name, // Ensure backend expects this format
-    };
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Departments";
-      await axios.post(URL, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      setMessage('New department created successfully!');
-      fetchDepartments();
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while creating the new department.');
-    }
-  };
-
-  const handleDeleteDepartment = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Departments";
-      await axios.delete(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        data: {
-          id: delete_department_id
-        },
-      });
-
-      setMessage('Department deleted successfully!');
-      fetchDepartments();
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while deleting the department.');
-    }
-  };
-
-  const handleGetDepartments = async () => {
-    fetchDepartments();
-  };
   return (
     <div>
       <header className="App-header">

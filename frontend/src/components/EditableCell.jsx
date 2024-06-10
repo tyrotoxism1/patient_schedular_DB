@@ -43,11 +43,7 @@ const EditableCell = ({ getValue, column, row, table, endpoint }) => {
         }
     };
 
-    useEffect(() => {
-        // Update value when initialValue changes
-        setValue(initialValue);
-        setOriginalValue(initialValue);
-    }, [initialValue]);
+  
 
     return (
         <Input
