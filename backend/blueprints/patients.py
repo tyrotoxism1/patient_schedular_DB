@@ -39,8 +39,9 @@ def patients():
             return jsonify(results)  
         # Update patient based on patient id 
         elif request.method == 'PUT':
+            print(f"Incoming PUT data: {request.get_json()}")
             data = request.get_json()
-            patient_id= int(data.get('id'))
+            patient_id= int(data.get('patient_id'))
             patient_new_name = data.get('name')
             patient_new_email = data.get('email')
 
