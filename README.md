@@ -1,7 +1,8 @@
 # Welcome to MedCare Clinic Patient Scheduler!
 # Overview
 This repo contains the backend and frontend(coming soon) of the CS340 project. 
-All code is based on the CS 340 starter code, with the exception of [insert original work].
+All code is based on the CS 340 starter code, with the exception of the components pages in the frontend folder and the blueprints pages in the backend folder. 
+All other resources used are cited within the code as used. 
 
 # Backend Setup
 - Backend uses flask
