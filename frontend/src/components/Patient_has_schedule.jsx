@@ -54,11 +54,11 @@ export default function Patient_has_schedule() {
     return (
         <div>
             <header className="App-header">
-                <h1>patient_has_schedule Management</h1>
+                <h1>Patient-Schedule Management</h1>
             </header>
             <div className="App-body">
                 <div className="right-half">
-                    <h2>patient_has_schedule Table</h2>
+                    <h2>Patient-Schedule Table</h2>
                     <JsonDataDisplay JSONdata={patient_has_schedule_data} endpoint={"Patients_has_Schedule"} />
                 </div>
 

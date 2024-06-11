@@ -100,10 +100,10 @@ export default function App() {
               <Link to="/Schedules">Schedules</Link>
             </li>
             <li>
-              <Link to="/Employee_has_Schedule">Employee_has_Schedule</Link>
+              <Link to="/Employee_has_Schedule">Employee-Schedule</Link>
             </li>
             <li>
-              <Link to="/Patient_has_Schedule">Patient_has_Schedule</Link>
+              <Link to="/Patient_has_Schedule">Patient-Schedule</Link>
             </li>
             <li>
               <Link to="/Testing">Testing</Link>

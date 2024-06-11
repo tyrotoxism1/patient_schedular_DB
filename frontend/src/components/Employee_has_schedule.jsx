@@ -54,11 +54,11 @@ export default function Employee_has_schedule() {
     return (
         <div>
             <header className="App-header">
-                <h1>employee_has_schedule Management</h1>
+                <h1>Employee-Schedule Management</h1>
             </header>
             <div className="App-body">
                 <div className="right-half">
-                    <h2>employee_has_schedule Table</h2>
+                    <h2>Employee-Schedule Table</h2>
                     <JsonDataDisplay JSONdata={employee_has_schedule_data} endpoint={"Employee_has_Schedule"} />
                 </div>
 
