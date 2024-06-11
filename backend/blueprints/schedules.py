@@ -5,6 +5,24 @@ import random
 mysql = MySQL()
 schedule_page = Blueprint('schedule_page',__name__)
 
+def grab_patient_name(schedule_slot_id:int) -> str:
+    try:
+        cur = mysql.connection.cursor()
+        query = "SELECT required_role FROM Procedures WHERE procedure_name=%s"
+        cur.execute(query, (schedule_slot_id,))
+        #Results should only be 1 value since `procedure_name` column is PK
+        results = cur.fetchone()
+        cur.close()
+        if results:
+            return results['required_role']
+        else:
+            print("No role found for the given procedure.")
+            return None
+    except Exception as e:
+        print(f"Failed to grab procedure required role: {e}")
+        return None
+
+
 def grab_procedure_req_role(procedure_name:str) -> str:
     try:
         cur = mysql.connection.cursor()
@@ -52,17 +70,13 @@ def grab_rand_employee_id(required_role) -> int:
         print(f"Failed to grab rand employee ID: {e}")
         return None
 
-def grab_patient_id(patient_name:str) -> int:
+def grab_patient_id(schedule_slot_id:int) -> int:
     try:
         cur = mysql.connection.cursor()
-        query = "SELECT patient_id FROM Patients WHERE name=%s"
-        cur.execute(query, (patient_name,))
-        #TODO: Results could return more than 1 value since name is not unique!
-        # We need to add another field for creating schedule such as email to frontend
-        # and also make it so the email column for 'Patients' is unique so we can use
-        # both name and email to get unique patient and grab the corresponding id
-
-        #For now just grab first result
+        query = "SELECT Patients_patient_id FROM Patients_has_Schedule WHERE Schedule_slot_id=%s"
+        cur.execute(query, (schedule_slot_id,))
+        #Since schedule_id is unique should only get one result from query
+        # but to be sure, use fetchone
         results = cur.fetchone()
         results = results['patient_id']
         cur.close()
@@ -87,18 +101,19 @@ def schedules():
         print(f"Incoming POST data: {request.get_json()}")
         data = request.get_json()
         #Grab the incoming data params
-        schedule_patient_name = data.get('patient_name')
+        schedule_slot_id = data.get('time')
         schedule_date = data.get('date')
         schedule_procedure = data.get('procedure')
         try:
+            patient_name = grab_patient_name(schedule_slot_id)
             procedure_req_role = grab_procedure_req_role(schedule_procedure)
             procedure_duration = grab_procedure_duration(schedule_procedure)
             employee_id = grab_rand_employee_id(procedure_req_role)
-            patient_id = grab_patient_id(schedule_patient_name)
+            patient_id = grab_patient_id(schedule_slot_id)
             print(f"Grab results: req role:{procedure_req_role}, duration: {procedure_duration}, employee_id:{employee_id}, patient_id: {patient_id}")
         except Exception as e:
             print(f"Failed to grab necessary data from helper functions in POST of Schedules\n{e}")
-            return jsonify({"message": "Schedule created successfully"}), 501
+            return jsonify({"message": "Failed to create Schedule! "}), 501
         query1 = """INSERT INTO Schedules(
                     date,
                     time_slot,
@@ -138,42 +153,40 @@ def schedules():
             cur.close()
             print(f"Error executing SQL in 'POST' Method: {e}")
 
-
     elif request.method == 'PUT':
         print(request.get_json())
-        query1 = """INSERT INTO Schedules(
-                    date,
-                    time_slot,
-                    Procedures_procedure_name
-                    )VALUES(
-                    10-10-2001,
-                    60,
-                    "Women\'s Health Exam"
-                    );"""
-        query2  = """SET @last_schedule_ID = LAST_INSERT_ID();"""
-        query3 = """INSERT INTO Patients_has_Schedule(
-                    Patients_patient_id,
-                    Schedule_slot_id
-                    )VALUES(
-                    2,
-                    @last_schedule_ID
-                    );"""
-        query4 = """INSERT INTO Employees_has_Schedule(
-                    Employees_employee_id,
-                    Schedule_slot_id
-                    )VALUES(
-                    5,
-                    @last_schedule_ID
-        );"""
+        data = request.get_json()
+        schedule_slot_id = data.get('slot_id')
+        schedule_date = data.get('date')
+        schedule_procedure = data.get('Procedures_procedure_name')
+        try:
+            schedule_time_slot = grab_procedure_duration(schedule_procedure)
+        except Exception as e:
+            print(f"Failed to grab necessary data from helper functions in POST of Schedules\n{e}")
+            return jsonify({"message": "Failed to create Schedule! "}), 501
+ 
+        query = "UPDATE Schedules SET date=%s,time_slot=%s,Procedures_procedure_name=%s WHERE slot_id=%s"
         try: 
             cur = mysql.connection.cursor()
-            cur.execute(query1)
-            cur.execute(query2)
-            cur.execute(query3)
-            cur.execute(query4)
-
+            cur.execute(query, (schedule_date,schedule_time_slot,schedule_procedure,schedule_slot_id))
+            mysql.connection.commit()
         except Exception as e:
             print(f"Error executing SQL in 'PUT' Method: {e}")
+
+    elif request.method == 'DELETE':
+        print("Delete data in Schedules: ",request.data)
+        data = request.get_json()
+        slot_id = int(data.get('slot_id'))
+        query = f"DELETE FROM Schedules WHERE slot_id = %s;"
+        print(f"Query: {query}")
+        cur = mysql.connection.cursor()
+        cur.execute(query, (slot_id,))
+        mysql.connection.commit()
+        results = cur.fetchall()
+        print(f"Result: {results}")
+        cur.close() 
+        return jsonify(results)
+ 
     else: 
         return "Invalid Request Method", 405
  

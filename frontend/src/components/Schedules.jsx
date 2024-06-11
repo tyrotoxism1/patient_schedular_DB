@@ -1,7 +1,12 @@
-import JsonDataDisplay from './table';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import Dropdown from './dropdown';
+import { DeleteIcon } from '@chakra-ui/icons'
+import { createNewTableContext } from './TableDataContext';
+import DateCell from './DateCell';
+import EditableTable from './EditableTable';
+import EditableCell from './EditableCell';
+
+
 
 export default function Schedule() {
   const [ProcedureNames, setProcedureNames] = useState([]);
@@ -15,203 +20,107 @@ export default function Schedule() {
   const [delete_schedule_id, set_delete_schedule_id] = useState('');
   const [schedule_data, set_schedule_data] = useState([]);
   const [message, setMessage] = useState('');
+  const { TableDataProvider, useTableData } = createNewTableContext();
+  const [initialData, setInitialData] = useState([]);
 
-  const fetchSchedules = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Schedules";
-      const response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log(response.data);
-      set_schedule_data(response.data);
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while getting the schedules.');
-    }
-  };
 
+  // Fetch data from API when component mounts
   useEffect(() => {
-    fetchSchedules();
-  }, []);
-
-  const handleGetProcedureNames = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + 'Procedures/Names';
-      const response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(response.data)
-      setProcedureNames(response.data);
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while fetching the department names.');
-    }
-  };
-  useEffect(() => {
-    handleGetProcedureNames();
-  }, []);
-
-  const handleGetPatientNames = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + 'Patients/Names';
-      const response = await axios.get(URL, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(response.data)
-      setPatientNames(response.data);
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while fetching the department names.');
-    }
-  };
-  useEffect(() => {
-    handleGetPatientNames();
-  }, []);
-
-
-
-  const handleUpdateSchedule = async () => {
-    const data = {
-      patient_name: updateSchedulePatient,
-      date: updateScheduleDate,
-      procedure: updateScheduleProcedure
+    const fetchData = async () => {
+      try {
+        const URL = import.meta.env.VITE_API_URL + "Schedules";
+        const response = await axios.get(URL, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        setInitalData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
+    fetchData(); // Call the fetchData function
+  }, []); // Empty dependency array ensures useEffect runs only once on mount
+
+
+  const handleDeleteRow = async (scheduleID) => {
     try {
       const URL = import.meta.env.VITE_API_URL + "Schedules";
-      await axios.put(URL, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      setMessage('Schedule updated successfully!');
-      fetchSchedules();
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while updating the schedule.');
-    }
-  };
-
-  const handleCreateSchedule = async () => {
-    const data = {
-      patient_name: createSchedulePatient,
-      date: createScheduleDate,
-      procedure: createScheduleProcedure
-    };
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Schedules";
-      await axios.post(URL, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      });
-
-      setMessage('New schedule created successfully!');
-      fetchSchedules();
-    } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while creating the new schedule.');
-    }
-  };
-
-  const handleDeleteSchedule = async () => {
-    try {
-      const URL = import.meta.env.VITE_API_URL + "Schedules";
-      await axios.delete(URL, {
+      const response = await axios.delete(URL, {
         headers: {
           'Content-Type': 'application/json'
         },
         data: {
-          delete_schedule_id
-        },
+          slot_id: scheduleID 
+        }
       });
+      console.log('Row deleted:', response.data);
 
-      setMessage('Schedule deleted successfully!');
-      fetchSchedules();
+      // Update the table data (remove the deleted row)
+      const updatedData = initialData.filter((row) => row.slot_id !== scheduleID);
+      setInitialData(updatedData);
     } catch (error) {
-      console.error('Error:', error);
-      setMessage('An error occurred while deleting the schedule.');
+      console.error('API request error:', error);
+      // Handle error (e.g., show error message to the user)
     }
   };
 
-  // For drop down menu selection of creating schedule, capture selected value
-  const handleSelectedCreateProcedureChange = (selectedValue) => {
-    setCreateScheduleProcedure(selectedValue)
-  };
-  // For drop down menu selection of creating schedule, capture selected value
-  const handleSelectedCreatePatientChange = (selectedValue) => {
-    setCreateSchedulePatient(selectedValue)
-  };
 
-  // For drop down menu selection of updating schedule, capture selected value
-  const handleSelectedUpdateProcedureChange = (selectedValue) => {
-    setUpdateScheduleProcedure(selectedValue)
-  };
-  // For drop down menu selection of updatingschedule, capture selected value
-  const handleSelectedUpdatePatientChange = (selectedValue) => {
-    setUpdateSchedulePatient(selectedValue)
-  };
+  const columns = [
+    {
+      accessorKey: 'slot_id',
+      header: 'Schedule ID',
+      cell: (props) => <p>{props.getValue()}</p>,
+      editable: false,
+      isNew: false
+    },
+    {
+      accessorKey: 'date',
+      header: 'Appoitment Date',
+      cell: (props) => <DateCell {...props} endpoint="Schedules" addTime={true} />,
+      editable: true,
+      isNew: false
+    },
+    {
+      accessorKey: 'Procedures_procedure_name',
+      header: 'Scheduled Procedure',
+      cell: (props) => <EditableCell {...props} endpoint="Schedules" />,
+      editable: true,
+      isNew: false
+    },
+    {
+      accessorKey: 'time_slot',
+      header: 'Procedure Duration',
+      cell: (props) => <p>{props.getValue()}</p>,
+      editable: false,
+      isNew: false
+    },
+    {
+      accessorKey: 'delete_row',
+      header: '',
+      cell: (props) => (
+        <DeleteIcon
+          onClick={() => handleDeleteRow(props.row.original.slot_id)} // Call handleDeleteRow function
+          cursor="pointer"
+          color="red.500"
+        />
+      ),
+      editable: false,
+      isNew: false
+    }
+  ]
 
-
-  const handleGetSchedules = async () => {
-    fetchSchedules();
-  };
   return (
     <div>
       <header className="App-header">
         <h1>Schedule Management</h1>
       </header>
       <div className="App-body">
-        <div className="right-half">
-          <h2>Schedule Table</h2>
-          <JsonDataDisplay JSONdata={schedule_data} endpoint={"Schedules"} />
-        </div>
-
-        <div className="left-half">
-          <h2>Get Schedules</h2>
-          <button onClick={handleGetSchedules}>Get Schedules</button>
-          {message && <p>{message}</p>}
-
-          <h2>Create Appoitment</h2>
-          <input
-            type='datetime-local'
-            placeholder='Date of appoitnment'
-            value={createScheduleDate}
-            onChange={(e) => setCreateScheduleDate(e.target.value)}
-          />
-          <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedCreateProcedureChange} />
-          <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedCreatePatientChange} />
-
-          <button onClick={handleCreateSchedule}>Create Appoitment</button>
-          {message && <p>{message}</p>}
-
-          <h2>Update Appoitment</h2>
-          <label htmlFor="appointment-datetime">Updated Date of Appointmnet(Unchanged date will keep previous date):</label>
-          <input
-            type='datetime-local'
-            placeholder='Date of appoitnment'
-            value={updateScheduleDate}
-            onChange={(e) => setUpdateScheduleDate(e.target.value)}
-          />
-          <label htmlFor="appointment-procedure">Update Procedure(leave blank to keep same procedure):</label>
-          <Dropdown optionArr={ProcedureNames} onSelectChange={handleSelectedUpdateProcedureChange} />
-          <label htmlFor="appointment-procedure">Name of Recipient of Procedure</label>
-          <Dropdown optionArr={PatientNames} onSelectChange={handleSelectedUpdatePatientChange} />
-
-          <button onClick={handleUpdateSchedule}>Create Appoitment</button>
-          {message && <p>{message}</p>}
-
-
-
-        </div>
+        <TableDataProvider initialData={initialData}>
+          <EditableTable endpoint={'Schedules'} columns={columns} />
+        </TableDataProvider>
       </div >
-    </div >
+    </div>
 
   );
 }

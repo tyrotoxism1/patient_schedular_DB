@@ -26,9 +26,19 @@ const DateCell = ({ getValue, row, column, table, endpoint, addTime }) => {
         return null; // or a default date value
     };
 
-    const formatDateForSQL = (date) => {
+    const formatDateForSQL = (dateString) => {
+        const date = new Date(dateString);
+
         const pad = (num) => (num < 10 ? '0' + num : num);
-        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+
+        const year = date.getFullYear();
+        const month = pad(date.getMonth() + 1);
+        const day = pad(date.getDate());
+        const hours = pad(date.getHours());
+        const minutes = pad(date.getMinutes());
+        const seconds = pad(date.getSeconds());
+
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     };
 
     const initialDate = parseAndValidateDate(date);
@@ -52,7 +62,7 @@ const DateCell = ({ getValue, row, column, table, endpoint, addTime }) => {
             const formattedDate = formatDateForSQL(value);
 
             //Grab the new row data
-            const updatedRow = { ...row.original, [column.id]: value, };
+            const updatedRow = { ...row.original, [column.id]: addTime?formattedDate:value, };
 
             //If this cell is being edited for a new row, don't make API call yet, if it is not a new row, then make PUT API request
             if (table.options.addingRowInProgress === false) {
@@ -86,7 +96,7 @@ const DateCell = ({ getValue, row, column, table, endpoint, addTime }) => {
             wrapperClassName="date-wrapper"
             dateFormat={addTime ? "MM/dd/yyyy HH:mm" : "MM/dd/yyyy"}
             onBlur={handleBlur}
-            showTimeInput={addTime? true:false}
+            showTimeInput={addTime ? true : false}
             selected={value}
             onChange={(date) => {
                 setValue(date);
