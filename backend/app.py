@@ -52,7 +52,7 @@ app.register_blueprint(patient_has_schedule_page)
 # Listener
 if __name__ == "__main__":
     #Start the app on port 3000, it will be different once hosted
-    app.run(host='classwork.engr.oregonstate.edu', port=4247, debug=True)
+    app.run(host='classwork.engr.oregonstate.edu', port=4721, debug=True)
     #app.run()
 
 
