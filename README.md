@@ -1,10 +1,11 @@
 # Welcome to MedCare Clinic Patient Scheduler!
 # Overview
 This repo contains the backend and frontend(coming soon) of the CS340 project. 
+All code is based on the CS 340 starter code, with the exception of [insert original work].
 
 # Backend Setup
 - Backend uses flask
-- To setup the backend, it's reccomneded to use a virtual env.
+- To setup the backend, it's recommended to use a virtual env.
 ## Setting up venv
 1. Install venv if you don't already have it 
 	- `pip install virtualenv` 
