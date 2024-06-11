@@ -119,7 +119,7 @@ export default function Patient() {
   return (
     <div>
       <header className="App-header">
-        <h1>Department Management</h1>
+        <h1>Patient Management</h1>
       </header>
       <div className="App-body">
         <TableDataProvider initialData={initialData}>
