@@ -5,11 +5,12 @@ import { createNewTableContext } from './TableDataContext';
 import DateCell from './DateCell';
 import EditableTable from './EditableTable';
 import EditableCell from './EditableCell';
+import StatusCell from './StatusCell';
+import { buildHeaderGroups } from '@tanstack/react-table';
 
 
 
 export default function Schedule() {
-  const [ProcedureNames, setProcedureNames] = useState([]);
   const [PatientNames, setPatientNames] = useState([]);
   const [createSchedulePatient, setCreateSchedulePatient] = useState('');
   const [createScheduleProcedure, setCreateScheduleProcedure] = useState('');
@@ -22,10 +23,26 @@ export default function Schedule() {
   const [message, setMessage] = useState('');
   const { TableDataProvider, useTableData } = createNewTableContext();
   const [initialData, setInitialData] = useState([]);
+  const [procedures, setProcedureNames] = useState([]);
+
 
 
   // Fetch data from API when component mounts
   useEffect(() => {
+    const populateSTATUSES = async () => {
+      try{
+        const URL = import.meta.env.VITE_API_URL + "Procedures/Names";
+        const response = await axios.get(URL, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.data;
+        setProcedureNames(data);
+      } catch (error){
+        console.log("Error getting Procedure Names")
+      }
+    };
     const fetchData = async () => {
       try {
         const URL = import.meta.env.VITE_API_URL + "Schedules";
@@ -34,12 +51,13 @@ export default function Schedule() {
             'Content-Type': 'application/json'
           }
         });
-        setInitalData(response.data);
+        setInitialData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-    fetchData(); // Call the fetchData function
+    fetchData(); 
+    populateSTATUSES();
   }, []); // Empty dependency array ensures useEffect runs only once on mount
 
 
@@ -51,7 +69,7 @@ export default function Schedule() {
           'Content-Type': 'application/json'
         },
         data: {
-          slot_id: scheduleID 
+          slot_id: scheduleID
         }
       });
       console.log('Row deleted:', response.data);
@@ -64,7 +82,6 @@ export default function Schedule() {
       // Handle error (e.g., show error message to the user)
     }
   };
-
 
   const columns = [
     {
@@ -84,7 +101,7 @@ export default function Schedule() {
     {
       accessorKey: 'Procedures_procedure_name',
       header: 'Scheduled Procedure',
-      cell: (props) => <EditableCell {...props} endpoint="Schedules" />,
+      cell: (props) => <StatusCell {...props} STATUSES={procedures} tableDataAccessor="Procedures_procedure_name" statusAccessor = "procedure_name"/>,
       editable: true,
       isNew: false
     },

@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+from datetime import datetime, date
+
 from flask_mysqldb import MySQL 
 
 mysql = MySQL()
@@ -40,8 +42,20 @@ def patients():
             cur = mysql.connection.cursor()
             cur.execute(query)
             results = cur.fetchall()
+            print(results)
             cur.close()
-            return jsonify(results)  
+            formatted_results = []
+            # Convert results from tuple to dict if necessary
+            formatted_results = []
+            for row in results:
+                formatted_row = {}
+                for key, value in row.items():
+                    if isinstance(value, (datetime, date)):
+                        formatted_row[key] = value.strftime('%Y-%m-%d')
+                    else:
+                        formatted_row[key] = value
+                formatted_results.append(formatted_row)
+            return jsonify(formatted_results)  
         # Update patient based on patient id 
         elif request.method == 'PUT':
             print(f"Incoming PUT data: {request.get_json()}")

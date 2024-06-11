@@ -1,5 +1,6 @@
 from flask import Blueprint, json,jsonify, request
 from flask_mysqldb import MySQL 
+from datetime import datetime
 import random
 
 mysql = MySQL()
@@ -94,7 +95,17 @@ def schedules():
         cur.execute(query)
         results = cur.fetchall()
         cur.close()
-        return jsonify(results)
+         # Format the datetime columns
+        formatted_results = []
+        for row in results:
+            formatted_row = {}
+            for key, value in row.items():
+                if isinstance(value, datetime):
+                    formatted_row[key] = value.strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    formatted_row[key] = value
+            formatted_results.append(formatted_row)
+        return jsonify(formatted_results)
 
     # Creating schedule
     elif request.method == 'POST':
@@ -158,6 +169,8 @@ def schedules():
         data = request.get_json()
         schedule_slot_id = data.get('slot_id')
         schedule_date = data.get('date')
+        schedule_date= schedule_date.replace('GMT','')
+        print(schedule_date)
         schedule_procedure = data.get('Procedures_procedure_name')
         try:
             schedule_time_slot = grab_procedure_duration(schedule_procedure)
