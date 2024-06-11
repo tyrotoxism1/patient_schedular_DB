@@ -5,13 +5,18 @@ import EditableTable from './EditableTable';
 import EditableCell from './EditableCell';
 import { DeleteIcon } from '@chakra-ui/icons'
 import { createNewTableContext } from './TableDataContext';
+import StatusCell from './StatusCell';
+import Dropdown from './dropdown';
   
   
 export default function Employee() {
   const [update_employee_id, set_update_employee_id] = useState('');
   const [update_employee_new_name, set_update_employee_new_name] = useState('');
   const [update_employee_new_role, set_update_employee_new_role] = useState('');
-  const [departmentNames, setDepartmentNames] = useState([]);
+  // const [DepartmentNames, setDepartmentNames] = useState([]);
+  const [departments, setDepartmentNames] = useState([]);
+  const [createEmployeeDepartment, setCreateEmployeeDepartment] = useState('');
+  const [updateEmployeeDepartment, setUpdateEmployeeDepartment] = useState('');
   const [selectedDepartment,setSelectedDepartment] = useState([]);
   const [create_employee_new_name, set_create_employee_new_name] = useState('');
   const [create_employee_new_role, set_create_employee_new_role] = useState('');
@@ -22,6 +27,20 @@ export default function Employee() {
 
   // Fetch data from API when component mounts
   useEffect(() => {
+    const populateSTATUSES = async () => {
+      try{
+        const URL = import.meta.env.VITE_API_URL + "Departments/Names";
+        const response = await axios.get(URL, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await response.data;
+        setDepartmentNames(data);
+      } catch (error){
+        console.log("Error getting Department Names")
+      }
+    };
     const fetchData = async () => {
       try {
         const URL = import.meta.env.VITE_API_URL + "Employees";
@@ -30,14 +49,33 @@ export default function Employee() {
             'Content-Type': 'application/json'
           }
         });
-        setInitalData(response.data);
+        setInitialData(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData(); // Call the fetchData function
+    populateSTATUSES();
   }, []); // Empty dependency array ensures useEffect runs only once on mount
 
+  const handleGetDepartmentNames = async () => {
+    try {
+      const URL = import.meta.env.VITE_API_URL + 'Departments/Names';
+      const response = await axios.get(URL, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data)
+      setDepartmentNames(response.data);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessage('An error occurred while fetching the department names.');
+    }
+  };
+  useEffect(() => {
+    handleGetDepartmentNames();
+  }, []);
 
   const handleDeleteRow = async (employeeID) => {
     try {
@@ -59,6 +97,16 @@ export default function Employee() {
       console.error('API request error:', error);
       // Handle error (e.g., show error message to the user)
     }
+  };
+
+  // For drop down menu selection of creating department, capture selected value
+  const handleSelectedCreateDepartmentChange = (selectedValue) => {
+    setCreateEmployeeDepartment(selectedValue)
+  };
+
+  // For drop down menu selection of updating schedule, capture selected value
+  const handleSelectedUpdateDepartmentChange = (selectedValue) => {
+    setUpdateEmployeeDepartment(selectedValue)
   };
 
 
@@ -85,9 +133,10 @@ export default function Employee() {
       isNew: false
     },
     {
-      accessorKey: 'department',
+      accessorKey: 'Departments_department_name',
       header: 'Department',
-      cell: (props) => <EditableCell {...props} endpoint="Employees" />,
+      cell: (props) => <StatusCell {...props} STATUSES={departments} tableDataAccessor="Departments_department_name" statusAccessor = "department_name"/>,
+        // <Dropdown optionArr={DepartmentNames} onSelectChange={handleSelectedCreateDepartmentChange} />,
       editable: true,
       isNew: false
     },
