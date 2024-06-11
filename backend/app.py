@@ -31,9 +31,9 @@ from blueprints.patients_has_schedule import patient_has_schedule_page
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'classmysql.engr.oregonstate.edu'
-app.config['MYSQL_USER'] = 'cs340_jus'
-app.config['MYSQL_PASSWORD'] = '8494'
-app.config['MYSQL_DB'] = 'cs340_jus'
+app.config['MYSQL_USER'] = ''
+app.config['MYSQL_PASSWORD'] = ''
+app.config['MYSQL_DB'] = ''
 app.config['MYSQL_CURSORCLASS'] = "DictCursor"
 CORS(app)
 mysql = MySQL(app)
